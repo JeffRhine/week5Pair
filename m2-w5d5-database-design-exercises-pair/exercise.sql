@@ -26,20 +26,27 @@ procedure_name varchar(255) NOT NULL,
 CONSTRAINT pk_procedure_id PRIMARY KEY (procedure_id)
 );
 
-CREATE TABLE visit_procedure_animal (
-visit_id serial NOT NULL,
-date_id integer,
-procedure_id integer,
-pet_id integer,
-CONSTRAINT pk_visit_id PRIMARY KEY (visit_id),
-CONSTRAINT fk_procedure_id FOREIGN KEY (procedure_id) REFERENCES procedure(procedure_id),
-CONSTRAINT fk_pet_id FOREIGN KEY (pet_id) REFeRENCES pet(pet_id)
-CONSTRAINT fk_pet_id FOREIGN KEY (date_id) REFeRENCES dates(visit_date)
-);
-
 CREATE TABLE dates (
 visit_date DATE NOT NULL,
 CONSTRAINT pk_visit_date PRIMARY KEY (visit_date)
+);
+
+CREATE TABLE visit_pet (
+visit_date DATE,
+procedure_id integer NOT NULL,
+pet_id integer NOT NULL, 
+CONSTRAINT pk_visit_pet_id PRIMARY KEY (procedure_id,pet_id),
+CONSTRAINT fk_procedure_id FOREIGN KEY (procedure_id) REFERENCES procedure(procedure_id),
+CONSTRAINT fk_pet_id FOREIGN KEY (pet_id) REFeRENCES pet(pet_id)
+);
+
+CREATE TABLE visit (
+visit_id serial NOT NULL,
+date_id DATE NOT NULL,
+procedure_pet_id integer NOT NULL,
+CONSTRAINT pk_visit_id PRIMARY KEY (visit_id),
+CONSTRAINT fk_date_id FOREIGN KEY (date_id) REFeRENCES dates(visit_date),
+CONSTRAINT fk_procedure_pet_id FOREIGN KEY (procedure_pet_id) REFERENCES procedure_pet(procedure_pet_id)
 );
 
 ALTER TABLE visit_procedure
@@ -51,14 +58,15 @@ ADD FOREIGN KEY (procedure_id)
 REFERENCES procedure(procedure_id);
 
 CREATE TABLE invoice (
-invoice_id serial,
+invoice_id serial NOT NULL,
 invoice_date DATE NOT NULL,
-visit_id integer,
 procedure_id integer,
-visit_procedure_id integer,
+pet_id integer NOT NULL,
 CONSTRAINT pk_invoice_id PRIMARY KEY (invoice_id),
-CONSTRAINT fk_visit_procedure_id FOREIGN KEY (visit_procedure_id) REFERENCES visit_procedure(visit_id,procedure_id  )
+CONSTRAINT fk_visit_pet_id FOREIGN KEY (procedure_id,pet_id) REFERENCES visit_pet(procedure_id,pet_id)
+
 );
 
+drop table dates;
 
 ROLLBACK;
